@@ -19,15 +19,13 @@ import {
 } from 'src/constants/articleProps';
 
 interface Props {
-	setParams: (data: ArticleStateType) => void;
+	params: ArticleStateType;
+	handleClick: (data: ArticleStateType) => void;
 }
 
-export const ArticleParamsForm = ({ setParams }: Props) => {
-	debugger;
+export const ArticleParamsForm = ({ params, handleClick }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
-
-	const [articleParams, setState] =
-		useState<ArticleStateType>(defaultArticleState);
+	const [articleParams, setState] = useState<ArticleStateType>(params);
 
 	const asideClass = isOpen
 		? styles.container + ' ' + styles.container_open
@@ -37,7 +35,12 @@ export const ArticleParamsForm = ({ setParams }: Props) => {
 		<>
 			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
 			<aside className={asideClass}>
-				<form className={styles.form}>
+				<form
+					className={styles.form}
+					onSubmit={(e) => {
+						e.preventDefault();
+						handleClick(articleParams);
+					}}>
 					<Text size={31} uppercase weight={800}>
 						{'Задайте параметры'}
 					</Text>
@@ -97,15 +100,10 @@ export const ArticleParamsForm = ({ setParams }: Props) => {
 							type='clear'
 							onClick={() => {
 								setState(defaultArticleState);
-								setParams(defaultArticleState);
+								handleClick(defaultArticleState);
 							}}
 						/>
-						<Button
-							title='Применить'
-							htmlType='submit'
-							type='apply'
-							onClick={() => setParams(articleParams)}
-						/>
+						<Button title='Применить' htmlType='submit' type='apply' />
 					</div>
 				</form>
 			</aside>

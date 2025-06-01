@@ -16,11 +16,9 @@ const domNode = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(domNode);
 
 const App = () => {
-	debugger;
 	const [cssParams, setAppState] =
 		useState<ArticleStateType>(defaultArticleState);
 	const setParams = (params: ArticleStateType) => {
-		debugger;
 		setAppState(params);
 	};
 
@@ -36,7 +34,7 @@ const App = () => {
 					'--bg-color': cssParams.backgroundColor.value,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm setParams={setParams} />
+			<ArticleParamsForm params={cssParams} handleClick={setParams} />
 			<Article />
 		</main>
 	);
