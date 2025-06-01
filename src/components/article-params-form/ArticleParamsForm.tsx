@@ -9,15 +9,25 @@ import { Separator } from 'src/ui/separator';
 import { Select } from 'src/ui/select';
 import { Text } from 'src/ui/text';
 import {
+	ArticleStateType,
 	backgroundColors,
 	contentWidthArr,
+	defaultArticleState,
 	fontColors,
 	fontFamilyOptions,
 	fontSizeOptions,
 } from 'src/constants/articleProps';
 
-export const ArticleParamsForm = () => {
+interface Props {
+	setParams: (data: ArticleStateType) => void;
+}
+
+export const ArticleParamsForm = ({ setParams }: Props) => {
+	debugger;
 	const [isOpen, setIsOpen] = useState(false);
+
+	const [articleParams, setState] =
+		useState<ArticleStateType>(defaultArticleState);
 
 	const asideClass = isOpen
 		? styles.container + ' ' + styles.container_open
@@ -32,39 +42,70 @@ export const ArticleParamsForm = () => {
 						{'Задайте параметры'}
 					</Text>
 
-					<Select selected={null} options={fontFamilyOptions} title='Шрифт' />
+					<Select
+						selected={articleParams.fontFamilyOption}
+						options={fontFamilyOptions}
+						onChange={(selected) => {
+							setState({ ...articleParams, fontFamilyOption: selected });
+						}}
+						title='Шрифт'
+					/>
 
 					<RadioGroup
 						name={''}
+						selected={articleParams.fontSizeOption}
 						options={fontSizeOptions}
-						selected={{
-							title: '',
-							value: '',
-							className: '',
-							optionClassName: undefined,
+						onChange={(selected) => {
+							setState({ ...articleParams, fontSizeOption: selected });
 						}}
 						title={'Размер шрифта'}
 					/>
 
-					<Select selected={null} options={fontColors} title='Цвет шрифта' />
+					<Select
+						selected={articleParams.fontColor}
+						options={fontColors}
+						onChange={(selected) => {
+							setState({ ...articleParams, fontColor: selected });
+						}}
+						title='Цвет шрифта'
+					/>
 
 					<Separator />
 
 					<Select
-						selected={null}
+						selected={articleParams.backgroundColor}
 						options={backgroundColors}
+						onChange={(selected) => {
+							setState({ ...articleParams, backgroundColor: selected });
+						}}
 						title='Цвет фона'
 					/>
 
 					<Select
-						selected={null}
+						selected={articleParams.contentWidth}
 						options={contentWidthArr}
+						onChange={(selected) => {
+							setState({ ...articleParams, contentWidth: selected });
+						}}
 						title='Ширина контента'
 					/>
 
 					<div className={styles.bottomContainer}>
-						<Button title='Сбросить' htmlType='reset' type='clear' />
-						<Button title='Применить' htmlType='submit' type='apply' />
+						<Button
+							title='Сбросить'
+							htmlType='reset'
+							type='clear'
+							onClick={() => {
+								setState(defaultArticleState);
+								setParams(defaultArticleState);
+							}}
+						/>
+						<Button
+							title='Применить'
+							htmlType='submit'
+							type='apply'
+							onClick={() => setParams(articleParams)}
+						/>
 					</div>
 				</form>
 			</aside>
