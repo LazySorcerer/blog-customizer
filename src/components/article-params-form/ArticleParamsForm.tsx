@@ -1,9 +1,7 @@
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
-
 import styles from './ArticleParamsForm.module.scss';
-
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
 import { Select } from 'src/ui/select';
@@ -17,58 +15,82 @@ import {
 	fontFamilyOptions,
 	fontSizeOptions,
 } from 'src/constants/articleProps';
+import clsx from 'clsx';
 
 interface Props {
-	params: ArticleStateType;
-	handleClick: (data: ArticleStateType) => void;
+	setArticleParams: (data: ArticleStateType) => void;
 }
 
-export const ArticleParamsForm = ({ params, handleClick }: Props) => {
+export const ArticleParamsForm = ({ setArticleParams }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
-	const [articleParams, setState] = useState<ArticleStateType>(params);
+	const [articleFormParams, setArticleFormParams] =
+		useState<ArticleStateType>(defaultArticleState);
+	const article: HTMLElement | null = document.querySelector('article');
 
-	const asideClass = isOpen
-		? styles.container + ' ' + styles.container_open
-		: styles.container;
+	const handleClick = () => {
+		setIsOpen(false);
+	};
+
+	useEffect(() => {
+		if (isOpen && article) {
+			article.addEventListener('click', handleClick);
+		}
+
+		return () => {
+			if (isOpen && article) {
+				article.removeEventListener('click', handleClick);
+			}
+		};
+	}, [isOpen]);
 
 	return (
 		<>
 			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
-			<aside className={asideClass}>
+			<aside
+				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
 				<form
 					className={styles.form}
 					onSubmit={(e) => {
 						e.preventDefault();
-						handleClick(articleParams);
+						setArticleParams(articleFormParams);
 					}}>
 					<Text size={31} uppercase weight={800}>
 						{'Задайте параметры'}
 					</Text>
 
 					<Select
-						selected={articleParams.fontFamilyOption}
+						selected={articleFormParams.fontFamilyOption}
 						options={fontFamilyOptions}
 						onChange={(selected) => {
-							setState({ ...articleParams, fontFamilyOption: selected });
+							setArticleFormParams({
+								...articleFormParams,
+								fontFamilyOption: selected,
+							});
 						}}
 						title='Шрифт'
 					/>
 
 					<RadioGroup
 						name={''}
-						selected={articleParams.fontSizeOption}
+						selected={articleFormParams.fontSizeOption}
 						options={fontSizeOptions}
 						onChange={(selected) => {
-							setState({ ...articleParams, fontSizeOption: selected });
+							setArticleFormParams({
+								...articleFormParams,
+								fontSizeOption: selected,
+							});
 						}}
 						title={'Размер шрифта'}
 					/>
 
 					<Select
-						selected={articleParams.fontColor}
+						selected={articleFormParams.fontColor}
 						options={fontColors}
 						onChange={(selected) => {
-							setState({ ...articleParams, fontColor: selected });
+							setArticleFormParams({
+								...articleFormParams,
+								fontColor: selected,
+							});
 						}}
 						title='Цвет шрифта'
 					/>
@@ -76,19 +98,25 @@ export const ArticleParamsForm = ({ params, handleClick }: Props) => {
 					<Separator />
 
 					<Select
-						selected={articleParams.backgroundColor}
+						selected={articleFormParams.backgroundColor}
 						options={backgroundColors}
 						onChange={(selected) => {
-							setState({ ...articleParams, backgroundColor: selected });
+							setArticleFormParams({
+								...articleFormParams,
+								backgroundColor: selected,
+							});
 						}}
 						title='Цвет фона'
 					/>
 
 					<Select
-						selected={articleParams.contentWidth}
+						selected={articleFormParams.contentWidth}
 						options={contentWidthArr}
 						onChange={(selected) => {
-							setState({ ...articleParams, contentWidth: selected });
+							setArticleFormParams({
+								...articleFormParams,
+								contentWidth: selected,
+							});
 						}}
 						title='Ширина контента'
 					/>
@@ -99,8 +127,8 @@ export const ArticleParamsForm = ({ params, handleClick }: Props) => {
 							htmlType='reset'
 							type='clear'
 							onClick={() => {
-								setState(defaultArticleState);
-								handleClick(defaultArticleState);
+								setArticleFormParams(defaultArticleState);
+								setArticleParams(defaultArticleState);
 							}}
 						/>
 						<Button title='Применить' htmlType='submit' type='apply' />
