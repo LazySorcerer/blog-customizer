@@ -1,15 +1,23 @@
 import type { StorybookConfig } from '@storybook/react-webpack5';
-const path = require('path');
+// const path = require('path');
+import { createRequire } from 'node:module';
+import path from 'path';
+import { fileURLToPath } from 'node:url';
+
+// Получаем __dirname в ESM
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+const require = createRequire(import.meta.url);
 
 const config: StorybookConfig = {
 	stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
 	addons: [
-        '@storybook/addon-links',
-        '@storybook/addon-essentials',
-        '@storybook/addon-onboarding',
-        '@storybook/addon-interactions',
-        '@storybook/addon-styling-webpack',
-        {
+		'@storybook/addon-links',
+		'@storybook/addon-essentials',
+		'@storybook/addon-onboarding',
+		'@storybook/addon-interactions',
+		'@storybook/addon-styling-webpack',
+		{
 			name: '@storybook/addon-styling-webpack',
 
 			options: {
@@ -60,8 +68,8 @@ const config: StorybookConfig = {
 				],
 			},
 		},
-        '@storybook/addon-webpack5-compiler-swc'
-    ],
+		'@storybook/addon-webpack5-compiler-swc',
+	],
 	webpackFinal: async (config) => {
 		if (config?.resolve?.alias) {
 			config.resolve.alias = {
