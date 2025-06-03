@@ -1,7 +1,7 @@
 import { ArrowButton } from 'src/ui/arrow-button';
 import { Button } from 'src/ui/button';
 import styles from './ArticleParamsForm.module.scss';
-import { useEffect, useState } from 'react';
+import { useRef, useState } from 'react';
 import { RadioGroup } from 'src/ui/radio-group';
 import { Separator } from 'src/ui/separator';
 import { Select } from 'src/ui/select';
@@ -16,6 +16,7 @@ import {
 	fontSizeOptions,
 } from 'src/constants/articleProps';
 import clsx from 'clsx';
+import { useOutsideClickClose } from './hooks/useOutsideClickClose';
 
 interface Props {
 	setArticleParams: (data: ArticleStateType) => void;
@@ -25,29 +26,20 @@ export const ArticleParamsForm = ({ setArticleParams }: Props) => {
 	const [isOpen, setIsOpen] = useState(false);
 	const [articleFormParams, setArticleFormParams] =
 		useState<ArticleStateType>(defaultArticleState);
-	const article: HTMLElement | null = document.querySelector('article');
+	const rootRef = useRef<HTMLDivElement>(null);
 
-	const handleClick = () => {
-		setIsOpen(false);
-	};
-
-	useEffect(() => {
-		if (isOpen && article) {
-			article.addEventListener('click', handleClick);
-		}
-
-		return () => {
-			if (isOpen && article) {
-				article.removeEventListener('click', handleClick);
-			}
-		};
-	}, [isOpen]);
+	useOutsideClickClose({
+		isOpen,
+		rootRef,
+		onClick: setIsOpen,
+	});
 
 	return (
 		<>
 			<ArrowButton isOpen={isOpen} onClick={() => setIsOpen(!isOpen)} />
 			<aside
-				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
+				className={clsx(styles.container, { [styles.container_open]: isOpen })}
+				ref={rootRef}>
 				<form
 					className={styles.form}
 					onSubmit={(e) => {

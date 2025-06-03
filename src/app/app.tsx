@@ -24,11 +24,7 @@ export const App = () => {
 					'--bg-color': articleParams.backgroundColor.value,
 				} as CSSProperties
 			}>
-			<ArticleParamsForm
-				setArticleParams={(params: ArticleStateType) => {
-					setArticleParams(params);
-				}}
-			/>
+			<ArticleParamsForm setArticleParams={setArticleParams} />
 			<Article />
 		</main>
 	);
